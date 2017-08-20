@@ -1,22 +1,23 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <time.h>
+#include <ctype.h>
 
-#define TRUE 1
-#define FALSE 0
+typedef enum {FALSE=0, TRUE=1} bool;
+
 #define SINBOMBA 0
 #define BOMBA -3
-#define GANAR FALSE
-#define PERDER FALSE
+#define FLAG -4
+#define MOVE -5
 
 
-void verificarFinal () {
-    if (GANAR==TRUE) {
-        printf("Usted ha ganado!\n");
-    }else {
-        printf("Usted ha perdido!\n");
+void verificarJugada(int ** tablero,int ** jugadas,int filas, int columnas,bool perder){
+    printf("entre aca\n");
+    if ( tablero[filas][columnas]== BOMBA && jugadas[filas][columnas]== MOVE ) {
+        printf("ñaca ñaca\n");
+        perder = TRUE;
     }
+
 }
 
 void insertarMinas (int ** tablero,int filas, int columnas, int cantMinas) {
@@ -82,7 +83,6 @@ void insertarNumeros (int ** matriz, int filas, int columnas) {
     for ( i = 0; i < filas; i++ ) {
         for ( j = 0; j < columnas; j++) {
             if (matriz[i][j] != BOMBA) {
-                printf("%i %i\n",i+1,j+1);
                 if (verificarMargen(i-1,j,filas,columnas)==1 && matriz[i-1][j]==BOMBA) {
                     matriz[i][j]+=1;
                 }
@@ -120,6 +120,16 @@ void liberarMemoria (int ** matriz, int filas) {
     free(matriz);
 }
 
+void verificarFinal (int ** tablero,int filas, int columnas,bool ganar) {
+    if ( ganar==TRUE ) {
+        printf("Usted ha ganado!\n");
+    }else {
+        printf("Usted ha perdido!\n");
+        printf("Solucion:\n");
+        printMatriz(tablero,filas,columnas);
+    }
+}
+
 void iniciar () {
     // int filas, columnas,cantMinas;
     //
@@ -129,11 +139,13 @@ void iniciar () {
     // printf("Ingrese la cantidad de minas:");
     // scanf("%i",&cantMinas);
 
-    int filas = 8, columnas = 8, cantMinas = 8;
-    //ACTIVAR CON EL WHILE DE MAS ABAJO
-    //int filaIngresada, columnaIngresada;
-    //char jugada;
-    //int contadorJugadas=0;
+    int filas = 8, columnas = 8, cantMinas = 10;
+
+    int filaIngresada, columnaIngresada;
+    char jugada;
+    int contadorJugadas=0;
+    bool ganar = FALSE;
+    bool perder = FALSE;
 
     //inicializar matrices
     int ** jugadas = (int**)malloc(filas * sizeof(int*));
@@ -150,26 +162,34 @@ void iniciar () {
         }
     }
 
-    insertarMinas(tablero, filas, columnas,cantMinas);
-    printMatriz(tablero, filas, columnas);
+    printMatriz(jugadas, filas, columnas);
     printf("\n");
-    insertarNumeros(tablero, filas, columnas);
-    printf("\n");
-    printMatriz(tablero, filas, columnas);
-    crearArchivo(tablero, filas, columnas);
-    printf("\n");
-    liberarMemoria(tablero,filas);
-    liberarMemoria(jugadas,filas);
 
-    /*while (GANAR == FALSE && PERDER == FALSE) {
+    while (ganar == FALSE && perder == FALSE) {
         printf("Ingrese Jugada: ");
         scanf("%i  %i %c",&filaIngresada,&columnaIngresada,&jugada);
         if (contadorJugadas==0) {
-            insertarMinas(jugadas, filas, columnas,cantMinas);
-
+            insertarMinas(tablero, filas, columnas,cantMinas);
+            insertarNumeros(tablero, filas, columnas);
+            crearArchivo(tablero, filas, columnas);
         }
-    }*/
-    //verificarFinal();
+        if (tolower(jugada)== 'o') {
+            jugadas[filaIngresada-1][columnaIngresada-1] = MOVE;
+        }else {
+            jugadas[filaIngresada-1][columnaIngresada-1] = FLAG ;
+        }
+        printf("\n");
+        printMatriz(tablero, filas, columnas);
+        printf("\n");
+        printMatriz(jugadas, filas, columnas);
+        printf("\n");
+        contadorJugadas += 1;
+        verificarJugada(tablero,jugadas,filaIngresada-1,columnaIngresada-1,perder);
+        printf("%i\n",perder);
+    }
+    verificarFinal(tablero,filas,columnas,ganar);
+    liberarMemoria(tablero,filas);
+    liberarMemoria(jugadas,filas);
 }
 
 int main() {
