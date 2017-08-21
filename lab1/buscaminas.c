@@ -32,7 +32,7 @@ void insertarMinas (int ** tablero,int filas, int columnas, int cantMinas,int x,
     while (i<cantMinas) {
         posX = rand() % filas;
         posY = rand() % columnas;
-        if (posX != x && posY != y) {
+        if ((posX != x && posY != y) || tablero[posX][posY] != BOMBA) {
             tablero[posX][posY] = BOMBA;
         }else{
             i--;
@@ -223,5 +223,7 @@ int main() {
     return 0;
 }
 
-// arreglar que no se inicie una bomba en la primera jugadas
-// arreglar el random
+// arreglar que no se inicie una bomba en la primera jugadas(listo)
+// arreglar el random (listo)
+// expandir mapa
+//victoria
