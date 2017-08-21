@@ -10,7 +10,6 @@ typedef enum {FALSE=0, TRUE=1} bool;
 #define FLAG -4
 #define MOVE -5
 
-
 bool verificarDerrota(int ** tablero,int ** jugadas,int filas, int columnas){
     if ( tablero[filas][columnas]== BOMBA && jugadas[filas][columnas]== MOVE ) {
         return TRUE;
@@ -28,11 +27,12 @@ bool verificarVictoria (int filas, int columnas,int cantMinas, int cantJugadas){
 void insertarMinas (int ** tablero,int filas, int columnas, int cantMinas,int x,int y) {
     int posX,posY;
     int i=0;
+    printf("cantminas: %i\n",cantMinas);
     srand(time(NULL));
     while (i<cantMinas) {
         posX = rand() % filas;
         posY = rand() % columnas;
-        if ((posX != x && posY != y) || tablero[posX][posY] != BOMBA) {
+        if ((posX != x && posY != y) && tablero[posX][posY] != BOMBA) {
             tablero[posX][posY] = BOMBA;
         }else{
             i--;
@@ -165,12 +165,49 @@ void verificarFinal (int ** tablero,int filas, int columnas,bool ganar) {
     }
 }
 
+void expandirMatriz (int ** tablero,int ** jugadas,int filas, int columnas, int posX,int posY) {
+    int i,j;
+    for ( i = 0; i < filas; i++ ) {
+        for ( j = 0; j < columnas; j++) {
+            if (tablero[i][j] == SINBOMBA) {
+                if (verificarMargen(i-1,j,filas,columnas)==1 && tablero[i-1][j]==BOMBA) {
+                    tablero[i][j]+=1;
+                }
+                if (verificarMargen(i+1,j,filas,columnas)==1 && tablero[i+1][j]==BOMBA) {
+                    tablero[i][j]+=1;
+                }
+                if (verificarMargen(i,j+1,filas,columnas)==1 && tablero[i][j+1]==BOMBA) {
+                    tablero[i][j]+=1;
+                }
+                if (verificarMargen(i,j-1,filas,columnas)==1 && tablero[i][j-1]==BOMBA) {
+                    tablero[i][j]+=1;
+                }
+                if (verificarMargen(i-1,j-1,filas,columnas)==1 && tablero[i-1][j-1]==BOMBA) {
+                    tablero[i][j]+=1;
+                }
+                if (verificarMargen(i+1,j+1,filas,columnas)==1 && tablero[i+1][j+1]==BOMBA) {
+                    tablero[i][j]+=1;
+                }
+                if (verificarMargen(i+1,j-1,filas,columnas)==1 && tablero[i+1][j-1]==BOMBA) {
+                    tablero[i][j]+=1;
+                }
+                if (verificarMargen(i-1,j+1,filas,columnas)==1 && tablero[i-1][j+1]==BOMBA) {
+                    tablero[i][j]+=1;
+                }
+            }
+        }
+    }
+
+
+}
 void iniciar () {
     int filas, columnas,cantMinas;
-    printf("Ingrese cantidad de filas y columnas:");
+    printf("\n####################################\n");
+    printf("#            BUSCAMINAS            #\n");
+    printf("####################################\n");
+    printf("\nIngrese cantidad de filas y columnas:");
     scanf("%i  %i",&filas,&columnas);
-
-    printf("Ingrese la cantidad de minas:");
+    printf("\nIngrese la cantidad de minas:");
     scanf("%i",&cantMinas);
     printf("\n");
 
