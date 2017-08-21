@@ -47,7 +47,18 @@ void crearArchivo (int ** tablero,int filas, int columnas) {
     int i,j;
     for (i = 0; i < columnas; i++) {
         for (j = 0; j < filas; j++) {
-            fprintf(fp, "%3i", tablero[i][j]);
+            if (tablero[i][j] == 0) {
+                fprintf(fp,"%3s","-");
+            }else if(tablero[i][j] == -3){
+                fprintf(fp,"%3s","B");
+            }else if(tablero[i][j] == -4){
+                fprintf(fp,"%3s","X");
+            }else if(tablero[i][j] == -5){
+                fprintf(fp,"%3s","O");
+            }else{
+                fprintf(fp, "%3i", tablero[i][j]);
+            }
+
         }
         fprintf(fp, "\n");
     }
@@ -70,9 +81,19 @@ void printMatriz (int ** matriz, int filas, int columnas) {
             if (i == -2){
                 printf("%3i",j+1);
             }else if (i == -1) {
-                printf("%3s","-");
+                printf("%3s","=");
             }else {
-                printf("%3d", matriz[i][j]);
+                if (matriz[i][j] == 0) {
+                    printf("%3s","-");
+                }else if(matriz[i][j] == -3){
+                    printf("%3s","B");
+                }else if(matriz[i][j] == -4){
+                    printf("%3s","X");
+                }else if(matriz[i][j] == -5){
+                    printf("%3s","O");
+                }else{
+                    printf("%3d", matriz[i][j]);
+                }
             }
         }
         printf("\n");
@@ -145,15 +166,15 @@ void verificarFinal (int ** tablero,int filas, int columnas,bool ganar) {
 }
 
 void iniciar () {
-    // int filas, columnas,cantMinas;
-    //
-    // printf("Ingrese cantidad de filas y columnas:");
-    // scanf("%i  %i",&filas,&columnas);
-    //
-    // printf("Ingrese la cantidad de minas:");
-    // scanf("%i",&cantMinas);
+    int filas, columnas,cantMinas;
+    printf("Ingrese cantidad de filas y columnas:");
+    scanf("%i  %i",&filas,&columnas);
 
-    int filas = 2, columnas = 2, cantMinas = 1;
+    printf("Ingrese la cantidad de minas:");
+    scanf("%i",&cantMinas);
+    printf("\n");
+
+    //int filas = 10, columnas = 10, cantMinas = 10;
 
     int filaIngresada, columnaIngresada;
     char jugada;
