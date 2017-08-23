@@ -17,9 +17,13 @@ bool verificarDerrota(int ** tablero,int ** jugadas,int filas, int columnas){
     return FALSE;
 }
 
-bool verificarVictoria (int filas, int columnas,int cantMinas, int cantJugadas){
-    if (cantJugadas == ((filas*columnas)-cantMinas)) {
-        return TRUE;
+bool verificarVictoria (int ** tablero,int ** jugadas,int filas, int columnas){
+    int i,j;
+    for ( i = 0; i < filas; i++) {
+        for ( j = 0; j < columnas; j++) {
+            //condicion para ganar
+
+        }
     }
     return FALSE;
 }
@@ -31,7 +35,7 @@ void insertarMinas (int ** tablero,int filas, int columnas, int cantMinas,int x,
     while (i<cantMinas) {
         posX = rand() % filas;
         posY = rand() % columnas;
-        if ((posX != x && posY != y) && tablero[posX][posY] != BOMBA) {
+        if ((posX != x && posY != y) && (tablero[posX][posY] != BOMBA)) {
             tablero[posX][posY] = BOMBA;
         }else{
             i--;
@@ -82,13 +86,13 @@ void printMatriz (int ** matriz, int filas, int columnas) {
             }else if (i == -1) {
                 printf("%3s","=");
             }else {
-                if (matriz[i][j] == 0) {
+                if (matriz[i][j] == SINBOMBA) {
                     printf("%3s","-");
-                }else if(matriz[i][j] == -3){
+                }else if(matriz[i][j] == BOMBA){
                     printf("%3s","B");
-                }else if(matriz[i][j] == -4){
+                }else if(matriz[i][j] == FLAG){
                     printf("%3s","X");
-                }else if(matriz[i][j] == -5){
+                }else if(matriz[i][j] == MOVE){
                     printf("%3s","O");
                 }else{
                     printf("%3d", matriz[i][j]);
@@ -164,49 +168,67 @@ void verificarFinal (int ** tablero,int filas, int columnas,bool ganar) {
     }
 }
 
-int expandirMatriz (int ** tablero,int ** jugadas,int filas, int columnas, int posX,int posY) {
-    int i,j;
-    for ( i = 0; i < filas; i++ ) {
-        for ( j = 0; j < columnas; j++) {
-            if (tablero[i][j] != SINBOMBA) {
-                return 0;
-            }else{
-                if (verificarMargen(i-1,j,filas,columnas)==1 && tablero[i-1][j]==SINBOMBA) {
-                    jugadas[i-1][j]= SINBOMBA;
-                    expandirMatriz(tablero,jugadas,filas,columnas,i-1,j);
-                }
-                if (verificarMargen(i+1,j,filas,columnas)==1 && tablero[i+1][j]==SINBOMBA) {
-                    jugadas[i+1][j]= SINBOMBA;
-                    //expandirMatriz(tablero,jugadas,filas,columnas,i+1,j);
-                }
-                if (verificarMargen(i,j+1,filas,columnas)==1 && tablero[i][j+1]==SINBOMBA) {
-                    jugadas[i][j+1]= SINBOMBA;
-                    expandirMatriz(tablero,jugadas,filas,columnas,i,j+1);
-                }
-                if (verificarMargen(i,j-1,filas,columnas)==1 && tablero[i][j-1]==SINBOMBA) {
-                    jugadas[i][j-1]= SINBOMBA;
-                    expandirMatriz(tablero,jugadas,filas,columnas,i,j-1);
-                }
-                if (verificarMargen(i-1,j-1,filas,columnas)==1 && tablero[i-1][j-1]==SINBOMBA) {
-                    jugadas[i-1][j-1]= SINBOMBA;
-                    expandirMatriz(tablero,jugadas,filas,columnas,i-1,j-1);
-                }
-                if (verificarMargen(i+1,j+1,filas,columnas)==1 && tablero[i+1][j+1]==SINBOMBA) {
-                    jugadas[i+1][j+1]= SINBOMBA;
-                    expandirMatriz(tablero,jugadas,filas,columnas,i+1,j+1);
-                }
-                if (verificarMargen(i+1,j-1,filas,columnas)==1 && tablero[i+1][j-1]==SINBOMBA) {
-                    jugadas[i+1][j-1]= SINBOMBA;
-                    expandirMatriz(tablero,jugadas,filas,columnas,i+1,j-1);
-                }
-                if (verificarMargen(i-1,j+1,filas,columnas)==1 && tablero[i-1][j+1]==SINBOMBA) {
-                    jugadas[i-1][j+1]= SINBOMBA;
-                    expandirMatriz(tablero,jugadas,filas,columnas,i-1,j+1);
-                }
-            }
-        }
+int expandirMatriz (int ** tablero,int ** jugadas,int filas, int columnas, int posX,int posY,int posXant,int posYant,int origenX,int origenY) {
+
+    printf("entra posicion:(%i,%i)\n",posX+1,posY+1);
+
+    if (tablero[posX][posY] != SINBOMBA) {
+        printf("condicion 1\n");
+        return 0;
+    }
+    //arriba
+    if (verificarMargen(posX-1,posY,filas,columnas)==1 && tablero[posX-1][posY] == SINBOMBA && jugadas[posX-1][posY] != MOVE) {
+        printf("arriba\n");
+        jugadas[posX-1][posY]=MOVE;
+        return expandirMatriz(tablero,jugadas,filas,columnas,posX-1,posY,posX,posY,origenX,origenY);
+    }
+    //arriba derecha
+    if (verificarMargen(posX-1,posY+1,filas,columnas)==1 && tablero[posX-1][posY+1] == SINBOMBA && jugadas[posX-1][posY+1] != MOVE) {
+        printf("arriba derecha\n");
+        jugadas[posX-1][posY+1]=MOVE;
+        return expandirMatriz(tablero,jugadas,filas,columnas,posX-1,posY+1,posX,posY,origenX,origenY);
+    }
+    //derecha
+    if (verificarMargen(posX,posY+1,filas,columnas)==1 && tablero[posX][posY+1] == SINBOMBA && jugadas[posX][posY+1] != MOVE) {
+        printf("derecha\n");
+        jugadas[posX][posY+1]=MOVE;
+        return expandirMatriz(tablero,jugadas,filas,columnas,posX,posY+1,posX,posY,origenX,origenY);
+    }
+    //abajo derecha
+    if (verificarMargen(posX+1,posY+1,filas,columnas)==1 && tablero[posX+1][posY+1] == SINBOMBA && jugadas[posX+1][posY+1] != MOVE) {
+        printf("abajo derecha\n");
+        jugadas[posX+1][posY+1]=MOVE;
+        return expandirMatriz(tablero,jugadas,filas,columnas,posX+1,posY+1,posX,posY,origenX,origenY);
+    }
+    //abajo
+    if (verificarMargen(posX+1,posY,filas,columnas)==1 && tablero[posX+1][posY] == SINBOMBA && jugadas[posX+1][posY] != MOVE) {
+        printf("abajo\n");
+        jugadas[posX+1][posY]=MOVE;
+        return expandirMatriz(tablero,jugadas,filas,columnas,posX+1,posY,posX,posY,origenX,origenY);
+    }
+    //abajo izquierda
+    if (verificarMargen(posX+1,posY-1,filas,columnas)==1 && tablero[posX+1][posY-1] == SINBOMBA && jugadas[posX+1][posY-1] != MOVE) {
+        printf("abajo izquierda\n");
+        jugadas[posX+1][posY-1]=MOVE;
+        return expandirMatriz(tablero,jugadas,filas,columnas,posX+1,posY-1,posX,posY,origenX,origenY);
+    }
+    //izquierda
+    if (verificarMargen(posX,posY-1,filas,columnas)==1 && tablero[posX][posY-1] == SINBOMBA && jugadas[posX][posY-1] != MOVE) {
+        printf("izquierda\n");
+        jugadas[posX][posY-1]=MOVE;
+        return expandirMatriz(tablero,jugadas,filas,columnas,posX,posY-1,posX,posY,origenX,origenY);
+    }
+    //arriba izquierda
+    if (verificarMargen(posX-1,posY-1,filas,columnas)==1 && tablero[posX-1][posY-1] == SINBOMBA && jugadas[posX-1][posY-1] != MOVE) {
+        printf("arriba izquierda\n");
+        jugadas[posX-1][posY-1]=MOVE;
+        return expandirMatriz(tablero,jugadas,filas,columnas,posX-1,posY-1,posX,posY,origenX,origenY);
     }
 
+    //return expandirMatriz(tablero,jugadas,filas,columnas,posXant,posYant,posX,posY,origenX,origenY);
+
+
+    printf("salir\n");
     return 0;
 }
 
@@ -230,9 +252,10 @@ void iniciar () {
             scanf("%i",&cantMinas);
             printf("\n");
         }
-    } while(cantMinas>(filas*columnas));
+    } while(cantMinas>(filas*columnas) || cantMinas==0);
 
-    int filaIngresada, columnaIngresada;
+    int filaIngresada,columnaIngresada;
+    int posXant=0 ,posYant=0;
     char jugada;
     int contadorJugadas=0;
     bool jugadaValida = TRUE;
@@ -267,8 +290,8 @@ void iniciar () {
             printf("\nIngrese Jugada Valida: ");
             scanf("%i  %i %c",&filaIngresada,&columnaIngresada,&jugada);
         }
-        if(verificarMargen(filaIngresada,columnaIngresada,filas,columnas)==0){
-            printf("\n");
+        if(verificarMargen(filaIngresada-1,columnaIngresada-1,filas,columnas)==0){
+            printf("aca se cae\n");
             jugadaValida = FALSE;
         }else{
             if(jugadas[filaIngresada-1][columnaIngresada-1]==MOVE){
@@ -292,7 +315,9 @@ void iniciar () {
                 crearArchivo(tablero, filas, columnas);
             }
 
-            //expandirMatriz(tablero,jugadas,filas,columnas,filaIngresada,columnaIngresada);
+            if (tolower(jugada) == 'o') {
+                expandirMatriz(tablero,jugadas,filas,columnas,filaIngresada-1,columnaIngresada-1,posXant,posYant,filaIngresada-1,columnaIngresada-1);
+            }
 
             if (tolower(jugada) != 'x') {
                 contadorJugadas += 1;
@@ -300,7 +325,7 @@ void iniciar () {
 
             if (verificarDerrota(tablero,jugadas,filaIngresada-1,columnaIngresada-1)== TRUE) {
                 perder= TRUE;
-            }else if(verificarVictoria(filas,columnas,cantMinas,contadorJugadas)== TRUE){
+            }else if(verificarVictoria(tablero,jugadas,filas,columnas)== TRUE){
                 ganar= TRUE;
             }
             else{
@@ -325,4 +350,5 @@ int main() {
 // arreglar que no se inicie una bomba en la primera jugadas(listo)
 // arreglar el random (listo)
 // expandir mapa
+// no perder al inicio
 //victoria
