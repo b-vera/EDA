@@ -37,10 +37,8 @@ void insertarMinas (int ** tablero,int filas, int columnas, int cantMinas,int x,
         posY = rand() % columnas;
         if ((posX != x && posY != y) && (tablero[posX][posY] != BOMBA)) {
             tablero[posX][posY] = BOMBA;
-        }else{
-            i--;
+            i++;
         }
-        i++;
     }
 }
 
@@ -168,68 +166,67 @@ void verificarFinal (int ** tablero,int filas, int columnas,bool ganar) {
     }
 }
 
-int expandirMatriz (int ** tablero,int ** jugadas,int filas, int columnas, int posX,int posY,int posXant,int posYant,int origenX,int origenY) {
+void expandirMatriz (int ** tablero,int ** jugadas,int filas, int columnas, int posX,int posY) {
 
     printf("entra posicion:(%i,%i)\n",posX+1,posY+1);
 
-    if (tablero[posX][posY] != SINBOMBA) {
-        printf("condicion 1\n");
-        return 0;
+    if (tablero[posX][posY] == BOMBA) {
+        return;
+    }
+    if (tablero[posX][posY] != SINBOMBA && jugadas[posX][posY]!=tablero[posX][posY]) {
+        printf("Entre\n");
+        jugadas[posX][posY]=tablero[posX][posY];
+        expandirMatriz(tablero,jugadas,filas,columnas,posX,posY);
     }
     //arriba
     if (verificarMargen(posX-1,posY,filas,columnas)==1 && tablero[posX-1][posY] == SINBOMBA && jugadas[posX-1][posY] != MOVE) {
         printf("arriba\n");
         jugadas[posX-1][posY]=MOVE;
-        return expandirMatriz(tablero,jugadas,filas,columnas,posX-1,posY,posX,posY,origenX,origenY);
+        expandirMatriz(tablero,jugadas,filas,columnas,posX-1,posY);
     }
     //arriba derecha
     if (verificarMargen(posX-1,posY+1,filas,columnas)==1 && tablero[posX-1][posY+1] == SINBOMBA && jugadas[posX-1][posY+1] != MOVE) {
         printf("arriba derecha\n");
         jugadas[posX-1][posY+1]=MOVE;
-        return expandirMatriz(tablero,jugadas,filas,columnas,posX-1,posY+1,posX,posY,origenX,origenY);
+        expandirMatriz(tablero,jugadas,filas,columnas,posX-1,posY+1);
     }
     //derecha
     if (verificarMargen(posX,posY+1,filas,columnas)==1 && tablero[posX][posY+1] == SINBOMBA && jugadas[posX][posY+1] != MOVE) {
         printf("derecha\n");
         jugadas[posX][posY+1]=MOVE;
-        return expandirMatriz(tablero,jugadas,filas,columnas,posX,posY+1,posX,posY,origenX,origenY);
+        expandirMatriz(tablero,jugadas,filas,columnas,posX,posY+1);
     }
     //abajo derecha
     if (verificarMargen(posX+1,posY+1,filas,columnas)==1 && tablero[posX+1][posY+1] == SINBOMBA && jugadas[posX+1][posY+1] != MOVE) {
         printf("abajo derecha\n");
         jugadas[posX+1][posY+1]=MOVE;
-        return expandirMatriz(tablero,jugadas,filas,columnas,posX+1,posY+1,posX,posY,origenX,origenY);
+        expandirMatriz(tablero,jugadas,filas,columnas,posX+1,posY+1);
     }
     //abajo
     if (verificarMargen(posX+1,posY,filas,columnas)==1 && tablero[posX+1][posY] == SINBOMBA && jugadas[posX+1][posY] != MOVE) {
         printf("abajo\n");
         jugadas[posX+1][posY]=MOVE;
-        return expandirMatriz(tablero,jugadas,filas,columnas,posX+1,posY,posX,posY,origenX,origenY);
+        expandirMatriz(tablero,jugadas,filas,columnas,posX+1,posY);
     }
     //abajo izquierda
     if (verificarMargen(posX+1,posY-1,filas,columnas)==1 && tablero[posX+1][posY-1] == SINBOMBA && jugadas[posX+1][posY-1] != MOVE) {
         printf("abajo izquierda\n");
         jugadas[posX+1][posY-1]=MOVE;
-        return expandirMatriz(tablero,jugadas,filas,columnas,posX+1,posY-1,posX,posY,origenX,origenY);
+        expandirMatriz(tablero,jugadas,filas,columnas,posX+1,posY-1);
     }
     //izquierda
     if (verificarMargen(posX,posY-1,filas,columnas)==1 && tablero[posX][posY-1] == SINBOMBA && jugadas[posX][posY-1] != MOVE) {
         printf("izquierda\n");
         jugadas[posX][posY-1]=MOVE;
-        return expandirMatriz(tablero,jugadas,filas,columnas,posX,posY-1,posX,posY,origenX,origenY);
+        expandirMatriz(tablero,jugadas,filas,columnas,posX,posY-1);
     }
     //arriba izquierda
     if (verificarMargen(posX-1,posY-1,filas,columnas)==1 && tablero[posX-1][posY-1] == SINBOMBA && jugadas[posX-1][posY-1] != MOVE) {
         printf("arriba izquierda\n");
         jugadas[posX-1][posY-1]=MOVE;
-        return expandirMatriz(tablero,jugadas,filas,columnas,posX-1,posY-1,posX,posY,origenX,origenY);
+        expandirMatriz(tablero,jugadas,filas,columnas,posX-1,posY-1);
     }
-
-    //return expandirMatriz(tablero,jugadas,filas,columnas,posXant,posYant,posX,posY,origenX,origenY);
-
-
-    printf("salir\n");
-    return 0;
+    //expandirMatriz(tablero,jugadas,filas,columnas,posXant,posYant,posX,posY,origenX,origenY);
 }
 
 void iniciar () {
@@ -255,7 +252,6 @@ void iniciar () {
     } while(cantMinas>(filas*columnas) || cantMinas==0);
 
     int filaIngresada,columnaIngresada;
-    int posXant=0 ,posYant=0;
     char jugada;
     int contadorJugadas=0;
     bool jugadaValida = TRUE;
@@ -316,7 +312,7 @@ void iniciar () {
             }
 
             if (tolower(jugada) == 'o') {
-                expandirMatriz(tablero,jugadas,filas,columnas,filaIngresada-1,columnaIngresada-1,posXant,posYant,filaIngresada-1,columnaIngresada-1);
+                expandirMatriz(tablero,jugadas,filas,columnas,filaIngresada-1,columnaIngresada-1);
             }
 
             if (tolower(jugada) != 'x') {
