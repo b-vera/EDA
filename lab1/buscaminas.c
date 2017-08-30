@@ -10,6 +10,7 @@ typedef enum {FALSE=0, TRUE=1} bool;
 #define FLAG -4
 #define MOVE -5
 
+//funcion que retorna true si se ha perdido el juego y false en el caso contrario
 bool verificarDerrota(int ** tablero,int ** jugadas,int filas, int columnas){
     if ( tablero[filas][columnas]== BOMBA && jugadas[filas][columnas]== MOVE ) {
         return TRUE;
@@ -17,6 +18,7 @@ bool verificarDerrota(int ** tablero,int ** jugadas,int filas, int columnas){
     return FALSE;
 }
 
+//funcion que retorna true si se ha ganado el juego y false en el caso contrario
 bool verificarVictoria (int ** jugadas,int filas, int columnas,int cantMinas){
     int i,j,total;
     int contador=0;
@@ -34,6 +36,7 @@ bool verificarVictoria (int ** jugadas,int filas, int columnas,int cantMinas){
     return FALSE;
 }
 
+//funcion encargada de posicionar las bombas en el tablero segun la cantidad indicada por el usuario
 void insertarMinas (int ** tablero,int filas, int columnas, int cantMinas,int x,int y) {
     int posX,posY;
     int i=0;
@@ -50,6 +53,7 @@ void insertarMinas (int ** tablero,int filas, int columnas, int cantMinas,int x,
     }
 }
 
+//funcion que crea un archivo de salida con la solucion en el
 void crearArchivo (int ** tablero,int filas, int columnas) {
     FILE *fp;
     fp = fopen ( "solucion.out", "w" );
@@ -74,6 +78,7 @@ void crearArchivo (int ** tablero,int filas, int columnas) {
  	fclose ( fp );
 }
 
+//funcion que imprime la matriz de datos deseada con formato de tablero
 void printMatriz (int ** matriz, int filas, int columnas) {
 
     int i,j;
@@ -109,6 +114,7 @@ void printMatriz (int ** matriz, int filas, int columnas) {
     }
 }
 
+//funcion filtro para verificar que la posicion a revisar no este fuera de los margenes
 int verificarMargen(int i, int j, int filas, int columnas){
     if (i<0 || j< 0 || i>= filas || j>= columnas) {
         return 0;
@@ -117,6 +123,7 @@ int verificarMargen(int i, int j, int filas, int columnas){
     }
 }
 
+//funcion que inserta los valores alrededor de las bombas
 void insertarNumeros (int ** matriz, int filas, int columnas) {
     int i,j;
     for ( i = 0; i < filas; i++ ) {
@@ -151,6 +158,7 @@ void insertarNumeros (int ** matriz, int filas, int columnas) {
     }
 }
 
+//funcion encargada de expandir la matriz cuando se selecciona casilla vacia
 void expandirMatriz (int ** tablero,int ** jugadas,int filas, int columnas, int posX,int posY) {
 
     //printf("entra posicion:(%i,%i)\n",posX+1,posY+1);
@@ -212,19 +220,21 @@ void expandirMatriz (int ** tablero,int ** jugadas,int filas, int columnas, int 
     }
 }
 
+//funcion que entrega el resultado en caso de una victoria o una derrota
 void verificarFinal (int ** tablero,int filas, int columnas,bool ganar) {
     if ( ganar==TRUE ) {
         printf("\n");
         printMatriz(tablero, filas, columnas);
-        printf("\nUSTED HA GANADO!\n\n");
+        printf("\n¡USTED HA GANADO!\n\n");
     }else {
 
-        printf("\nUSTED HA PERDIDO!\n\nSOLUCION :\n\n");
+        printf("\n¡USTED HA PERDIDO!\n\nSOLUCION :\n\n");
         printMatriz(tablero,filas,columnas);
         printf("\n");
     }
 }
 
+//funcion encargada de liberar la memoria para arreglos dinamicos bidimensionales
 void liberarMemoria (int ** matriz, int filas) {
     int i;
     for(i = 0; i < filas; i++){
@@ -233,6 +243,7 @@ void liberarMemoria (int ** matriz, int filas) {
     free(matriz);
 }
 
+//funcion que realiza las iniciaciones de variables y llama a las otras funciones
 void iniciar () {
     int filas, columnas,cantMinas;
     bool verificadorMinas = TRUE;
@@ -339,13 +350,8 @@ void iniciar () {
     liberarMemoria(jugadas,filas);
 }
 
+//funcion principal del codigo
 int main() {
     iniciar();
     return 0;
 }
-
-// arreglar que no se inicie una bomba en la primera jugadas(listo)
-// arreglar el random (listo)
-// expandir mapa
-// no perder al inicio
-//victoria
