@@ -44,9 +44,9 @@ void insertarMinas (int ** tablero,int filas, int columnas, int cantMinas,int x,
     while (i<cantMinas) {
         posX = rand() % filas;
         posY = rand() % columnas;
-        //printf("x %d y %d\n",x,y);
-        //printf("px %d py %d\n",posX,posY);
-        if ((posX != x && posY != y) && (tablero[posX][posY] != BOMBA)) {
+        printf("usuario == x %d y %d\n",x,y);
+        printf("px %d py %d\n",posX,posY);
+        if ((posX != x && posY != y) || (tablero[posX][posY] != BOMBA)) {
             tablero[posX][posY] = BOMBA;
             i++;
         }
