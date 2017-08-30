@@ -158,7 +158,7 @@ void insertarNumeros (int ** matriz, int filas, int columnas) {
     }
 }
 
-//funcion encargada de expandir la matriz cuando se selecciona casilla vacia
+//funcion recursiva encargada de expandir la matriz cuando se selecciona casilla vacia
 void expandirMatriz (int ** tablero,int ** jugadas,int filas, int columnas, int posX,int posY) {
 
     //printf("entra posicion:(%i,%i)\n",posX+1,posY+1);
