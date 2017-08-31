@@ -44,8 +44,8 @@ void insertarMinas (int ** tablero,int filas, int columnas, int cantMinas,int x,
     while (i<cantMinas) {
         posX = rand() % filas;
         posY = rand() % columnas;
-        printf("usuario == x %d y %d\n",x,y);
-        printf("px %d py %d\n",posX,posY);
+        //printf("usuario == x %d y %d\n",x,y);
+        //printf("px %d py %d\n",posX,posY);
         if ((posX != x && posY != y) || (tablero[posX][posY] != BOMBA)) {
             tablero[posX][posY] = BOMBA;
             i++;
@@ -53,7 +53,7 @@ void insertarMinas (int ** tablero,int filas, int columnas, int cantMinas,int x,
     }
 }
 
-//funcion que crea un archivo de salida con la solucion en el
+//funcion que crea un archivo de salida con la solucion en el.
 void crearArchivo (int ** tablero,int filas, int columnas) {
     FILE *fp;
     fp = fopen ( "solucion.out", "w" );
@@ -165,10 +165,9 @@ void expandirMatriz (int ** tablero,int ** jugadas,int filas, int columnas, int 
     if (tablero[posX][posY] == BOMBA) {
         return;
     }
-    if (tablero[posX][posY] != SINBOMBA && jugadas[posX][posY]!=tablero[posX][posY]) {
+    if ((tablero[posX][posY] != SINBOMBA) && (jugadas[posX][posY]!=tablero[posX][posY])) {
         //printf("Entre\n");
         jugadas[posX][posY]=tablero[posX][posY];
-        expandirMatriz(tablero,jugadas,filas,columnas,posX,posY);
     }
     //arriba
     if (verificarMargen(posX-1,posY,filas,columnas)==1 && tablero[posX-1][posY] == SINBOMBA && jugadas[posX-1][posY] != MOVE) {
@@ -264,7 +263,7 @@ void iniciar () {
             scanf("%i",&cantMinas);
             printf("\n");
         }
-    } while(cantMinas>(filas*columnas) || cantMinas==0);
+    } while(cantMinas>(filas*columnas) ||  cantMinas==0);
 
     int filaIngresada,columnaIngresada;
     char jugada;
