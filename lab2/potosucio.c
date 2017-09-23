@@ -40,7 +40,7 @@ bool usado[53];
 
 //TDA Mano de cartas
 
-Mano * crearMano(){
+Mano * crearMano() {
     Mano * List = (Mano *)malloc(sizeof(Mano));
     List->head = NULL;
     List->tail = NULL;
@@ -71,16 +71,17 @@ void agregarCarta(Mano * list,int valor) {
     }
 }
 
-void mostrarMano(Mano * list){
+void mostrarMano(Mano * list) {
     Carta *ptr = list->head;
     printf("entre aca\n");
     while(ptr) {
-        printf("carta %d\n",ptr->valor);
+        printf("carta %d ",ptr->valor);
         ptr = ptr->sig;
     }
+    printf("\n");
 }
 
-void borrarDeMano(Mano * list,int valor){
+void borrarDeMano(Mano * list,int valor) {
    Carta * nodo = list->head;
    Carta * anterior = NULL;
    while(nodo && nodo->valor < valor) {
@@ -99,12 +100,12 @@ void borrarDeMano(Mano * list,int valor){
    }
 }
 
-int obtenerPrimerValor(Mano * list){
+int obtenerPrimerValor(Mano * list) {
     Carta *ptr = list->head;
     return ptr->valor;
 }
 
-int obtenerUltimoValor(Mano * list){
+int obtenerUltimoValor(Mano * list) {
     Carta *ptr = list->head;
     printf("entre aca\n");
     while(ptr->sig) {
@@ -114,9 +115,50 @@ int obtenerUltimoValor(Mano * list){
     return ptr->valor;
 }
 
+void buscarPares(Mano * list){
+    Carta *ptr1 = list->head;
+    Carta *ptr2 = list->head;
+    while(ptr1) {
+        printf("carta %d ",ptr->valor);
+        ptr = ptr->sig;
+    }
+}
+
+void revolverMano(Mano * list){
+    printf("entre aca!!!!\n");
+    srand(time(NULL));
+    int index=0,i = 0,j,k,l,w;
+    Carta *ptr = list->head;
+    int * aux = (int*)malloc(sizeof(int)*list->size);
+    int * new = (int*)malloc(sizeof(int)*list->size);
+    int * used = (int*)malloc(sizeof(int)*list->size);
+
+    while(ptr) {
+        aux[i] = ptr->valor;
+        ptr = ptr->sig;
+        //borrarDeMano(list,ptr->valor);
+        i++;
+    }
+    for (j=0; j < list->size; j++) {
+    usado[i]=0;
+    }
+    for (k=0; k < list->size; k++) {
+        do{
+            index = (rand() % list->size);
+        } while (used[index]==1);
+        printf("%d escribiendo %d \n",k,aux[index]);
+        new[k] = aux[index];
+        used[index]=1;
+    }
+    for (l = 0; l < list->size; l++) {
+        //agregarCarta(list,new[l]);
+    }
+
+} //falta terminar
+
 //TDA Turnos
 
-Turnos * crearTurnos(){
+Turnos * crearTurnos() {
     Turnos * List = (Turnos *)malloc(sizeof(Turnos));
     List->head = NULL;
     List->tail = NULL;
@@ -147,7 +189,8 @@ void agregarJugador(Turnos * list,char* nombre) {
     }
 }
 
-void mostrarJugador(Turnos * list){
+
+void mostrarJugador(Turnos * list) {
     jugador *ptr = list->head;
     printf("entre aca\n");
     while(ptr) {
@@ -158,15 +201,15 @@ void mostrarJugador(Turnos * list){
 
 
 //operaciones del mazo
-void revolverMazo(){
+void revolverMazo() {
     srand(time(NULL));
     int i;
-    for (i=0; i < 53; i++){
+    for (i=0; i < 53; i++) {
     usado[i]=false;
     }
 
     int index=0;
-    for (i=0; i < 53; i++){
+    for (i=0; i < 53; i++) {
         do{
             index = (rand() % 53);
         } while (usado[index]);
@@ -177,17 +220,14 @@ void revolverMazo(){
     }
 }
 
-void mostrarMazo(){
+void mostrarMazo() {
     int i;
     for (i = 0; i < 53; i++) {
         printf("%d\n",*mazoRevuelto[i]);
     }
 }
 
-
-
-
-int main(){
+int main() {
     char* nombre = "a";
     char* nombre2 = "b";
     Mano * mano = crearMano();
@@ -195,9 +235,12 @@ int main(){
     agregarCarta(mano,J);
     agregarCarta(mano,Q);
     agregarCarta(mano,K);
-    //mostrarMano(mano);
+    mostrarMano(mano);
     borrarDeMano(mano,Q);
-    //mostrarMano(mano);
+    mostrarMano(mano);
+
+    revolverMano(mano);
+
     int prueba = obtenerPrimerValor(mano);
     int prueba2 = obtenerUltimoValor(mano);
 
