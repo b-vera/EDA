@@ -3,40 +3,7 @@
 #include <time.h>
 #include <ctype.h>
 #include <string.h>
-#include "listas.h"
-
-#define A 1
-#define J 11
-#define Q 12
-#define K 13
-#define JOKER 14
-#define BLANK 15
-
-// Estructuras
-
-typedef struct Carta {
-    int valor;
-    struct Carta * sig;
-} Carta;
-
-typedef struct Mano {
-    Carta * head;
-    Carta * tail;
-    int size;
-} Mano;
-
-typedef struct jugador {
-    char* nombre;
-    Mano* mano;
-    int verificador;
-    struct jugador * sig;
-} jugador;
-
-typedef struct Turnos {
-    jugador * head;
-    jugador * tail;
-    int size;
-} Turnos;
+#include "potosucio.h"
 
 // Mazo
 int mazo[53] = {A,2,3,4,5,6,7,8,9,0,J,Q,K,A,2,3,4,5,6,7,8,9,0,J,Q,K,A,2,3,4,5,6,7,8,9,0,J,Q,K,A,2,3,4,5,6,7,8,9,0,J,Q,K,JOKER};
@@ -113,12 +80,9 @@ Mano * borrarDeMano(Mano * list,int valor) {
 
         if(!anterior){ /* Primer elemento */
             list->head = nodo->sig;
-            //mostrarMano(list);
         }else{  /* un elemento cualquiera */
             anterior->sig = nodo->sig;
-            //mostrarMano(list);
         }
-        //free(nodo);
         list->size--;
     }
     return list;
@@ -353,7 +317,6 @@ void iniciar(){
     while (cont<(cantJugadores+1)) {
         actual->mano = crearMano();
         for ( j = 0; j < 12; j++) {
-            //printf("carta %d a jugador %s\n",*mazoRevuelto[contadorMazo],actual->nombre);
             agregarCarta(actual->mano,*mazoRevuelto[contadorMazo]);
             *mazoRevuelto[contadorMazo]=BLANK;
             contadorMazo++;
