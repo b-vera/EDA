@@ -12,7 +12,8 @@
 #define JOKER 14
 #define BLANK 15
 
-// estructuras
+// Estructuras
+
 typedef struct Carta {
     int valor;
     struct Carta * sig;
@@ -53,13 +54,12 @@ Mano * crearMano() {
 
 void agregarCarta(Mano * list,int valor) {
 
-    printf("entre a agregarCarta\n");
     Carta * link = (Carta *)malloc(sizeof(Carta));
 
     if (list->size == 0 ) {
         list->head= link;
         list->tail = link;
-        printf("%d\n",valor);
+        //printf("%d\n",valor);
         link->valor = valor;
         link->sig = NULL;
         list->size++;
@@ -67,7 +67,7 @@ void agregarCarta(Mano * list,int valor) {
     }else {
         link->sig = NULL;
         list->tail->sig = link;
-        printf("%d\n",valor);
+        //printf("%d\n",valor);
         link->valor = valor;
         list->size++;
         list->tail = link;
@@ -76,9 +76,11 @@ void agregarCarta(Mano * list,int valor) {
 
 void mostrarMano(Mano * list) {
     Carta *ptr = list->head;
-    printf("entre a mostrarMano\n");
     while(ptr) {
-        printf("carta %d ",ptr->valor);
+        printf("%d", ptr->valor);
+        if (ptr->sig) {
+            printf(",");
+        }
         ptr = ptr->sig;
     }
     printf("\n");
@@ -96,7 +98,7 @@ int buscarCarta(Mano * list,int pos){
 
 void borrarDeMano(Mano * list,int valor) {
 
-    printf("entre a borrar %d\n",valor );
+    //printf("entre a borrar %d\n",valor );
     Carta * nodo = list->head;
     Carta * anterior = NULL;
     while(nodo && nodo->valor < valor) {
@@ -109,14 +111,15 @@ void borrarDeMano(Mano * list,int valor) {
     } else { /* Borrar el nodo */
 
         if(!anterior){ /* Primer elemento */
-            nodo = nodo->sig;
+            list->head = nodo->sig;
+            //mostrarMano(list);
         }else{  /* un elemento cualquiera */
             anterior->sig = nodo->sig;
+            //mostrarMano(list);
         }
-        free(nodo);
+        //free(nodo);
         list->size--;
     }
-    printf("valor borrado\n");
 }
 
 int obtenerPrimerValor(Mano * list) {
@@ -136,14 +139,13 @@ int obtenerAleatorio(Mano * list){
     srand(time(NULL));
     int value,carta;
     value = (rand() % list->size);
-    printf("value %d\n",value);
+    printf("%c",10);
     carta = buscarCarta(list,value);
     return carta;
 }
 
 void EliminarPares(Mano * list){
-    printf("Entre a EliminarPares\n");
-    int index=0,i = 0,j,k,l;
+    int index=0,i = 0,j,k,l,valor;
     int length=list->size;
     Carta *ptr = list->head;
     int * aux = (int*)malloc(sizeof(int)*list->size);
@@ -155,8 +157,8 @@ void EliminarPares(Mano * list){
         i++;
     }
 
-    for (j = 0; j < list->size; j++) {
-        for (k = 0; k < list->size; k++) {
+    for (j = 0; j < length; j++) {
+        for (k = 0; k < length; k++) {
             if (aux[j]==aux[k] && j!=k){
                 aux[j]=BLANK;
                 aux[k]=BLANK;
@@ -165,7 +167,6 @@ void EliminarPares(Mano * list){
     }
     for (l = 0; l < length; l++) {
         if (aux[l]!=BLANK) {
-            printf("agregue ---------- %d\n",aux[l]);
             agregarCarta(list,aux[l]);
         }
     }
@@ -184,21 +185,20 @@ void revolverMano(Mano * list){
     while(ptr!=NULL) {
         aux[i] = ptr->valor;
         ptr = ptr->sig;
-        //borrarDeMano(list,aux[i]);
+        borrarDeMano(list,aux[i]);
         i++;
     }
-    for (j=0; j < list->size; j++) {
+    for (j=0; j < length; j++) {
     usado[i]=0;
     }
-    for (k=0; k < list->size; k++) {
+    for (k=0; k < length; k++) {
         do{
-            index = (rand() % list->size);
+            index = (rand() % length);
         } while (used[index]==1);
         //printf("en pos %d escribo %d \n",k,aux[index]);
         new[k] = aux[index];
         used[index]=1;
     }
-    printf("list->size: %d\n",list->size);
     for (l = 0; l < length; l++) {
         //printf("agregue --------- %d\n",new[l]);
         agregarCarta(list,new[l]);
@@ -245,7 +245,8 @@ void mostrarJugador(Turnos * list) {
     }
 }
 
-//operaciones del mazo
+// Operaciones del Mazo
+
 void revolverMazo() {
     srand(time(NULL));
     int i;
@@ -267,16 +268,18 @@ void revolverMazo() {
 void mostrarMazo() {
     int i;
     for (i = 0; i < 53; i++) {
-        printf("%d\n",*mazoRevuelto[i]);
+        printf("%d->",*mazoRevuelto[i]);
     }
 }
+
+// Funcion Principal
 
 void iniciar(){
     printf("\n##################################################\n");
     printf("                    POTO SUCIO\n");
     printf("##################################################\n");
 
-    int cantJugadores,rival,index,i;
+    int cantJugadores,rival,index,i,valor;
     char * CPU1 = "CPU-1";
     char * CPU2 = "CPU-2";
     char * CPU3 = "CPU-3";
@@ -289,7 +292,7 @@ void iniciar(){
     scanf("%d",&cantJugadores);
     if (cantJugadores==1) {
         printf("\n-> Escoja su Rival :\n");
-        printf(" 1. CPU-1\n");
+        printf("\n 1. CPU-1\n");
         printf(" 2. CPU-2\n");
         printf(" 3. CPU-3\n");
         printf("\n-> ");
@@ -305,7 +308,7 @@ void iniciar(){
     }
 
 
-    //inicializar lista turnos con los jugadores
+    // Inicializar lista turnos con los jugadores
     Turnos * turnos = crearTurnos();
     agregarJugador(turnos,Jugador);
 
@@ -335,10 +338,10 @@ void iniciar(){
         }
     }
 
-    //empleamos nuestro mazo
+    // Empleamos nuestro mazo
     revolverMazo();
 
-    //inicializar manos de jugadores y repartir mano a cada jugador
+    // Inicializar manos de jugadores y repartir mano a cada jugador
     jugador *actual = turnos->head;
     int j;
     int cont=0;
@@ -357,130 +360,166 @@ void iniciar(){
     }
 
     // ETAPA 1 = pares en la mano
-    printf("\nETAPA 1\n");
     cont=0;
     actual=turnos->head;
+    if (strcmp("JANICE",Jugador)==0) {
+        printf("\n ____________________ ETAPA 1 ____________________\n");
+    }
     while (cont<(cantJugadores+1)) {
-        printf("Eliminando Pares en jugador %s\n",actual->nombre);
-        //mostrarMano(actual->mano);
-        //printf("\n");
-        //EliminarPares(actual->mano);
+        if (strcmp("JANICE",Jugador)==0) {
+            printf("\n-> Jugador: %s ",actual->nombre);
+            printf("| Mano: ");
+            mostrarMano(actual->mano);
+        }
+        EliminarPares(actual->mano);
+        if (strcmp("JANICE",Jugador)==0) {
+            printf("\n[Removiendo Pares]\n");
+            printf("\n-> Jugador: %s ",actual->nombre);
+            printf("| Mano: ");
+            mostrarMano(actual->mano);
+        }
         actual = actual->sig;
         cont++;
     }
 
     // ETAPA 2 = robar carta del mazo por turnos
-    printf("\nETAPA 2\n");
     cont=0;
     actual=turnos->head;
+    if (strcmp("JANICE",Jugador)==0) {
+        printf("\n ____________________ ETAPA 2 ____________________\n");
+    }
     while (contadorMazo != 53 ) {
         agregarCarta(actual->mano,*mazoRevuelto[contadorMazo]);
+        if (strcmp("JANICE",Jugador)==0) {
+            printf("\n-> TURNO = %s\n",actual->nombre);
+            printf("\n[Sacando Carta del Mazo]\n");
+            printf("\n Carta Sacada: %d\n",*mazoRevuelto[contadorMazo]);
+            printf("\nJugador: %s ",actual->nombre);
+            printf("| Mano: ");
+            mostrarMano(actual->mano);
+        }
+        EliminarPares(actual->mano);
+        if (strcmp("JANICE",Jugador)==0) {
+            printf("\n[Removiendo Pares]\n");
+            printf("\nJugador: %s ",actual->nombre);
+            printf("| Mano: ");
+            mostrarMano(actual->mano);
+        }
         *mazoRevuelto[contadorMazo]=BLANK;
         actual = actual->sig;
         contadorMazo++;
     }
-    //quitamos pares en etapa 2
-    actual=turnos->head;
-    while (cont<(cantJugadores+1)) {
-        //printf("Eliminando Pares en jugador %s\n",actual->nombre);
-        //mostrarMano(actual->mano);
-        //printf("\n");
-        //EliminarPares(actual->mano);
-        actual = actual->sig;
-        cont++;
-    }
 
     //ETAPA 3 = robar carta al compañero
-    printf("\nETAPA 3\n");
     char respuesta;
     int carta,value;
-    actual=turnos->head;
+    if (strcmp("JANICE",Jugador)==0) {
+        printf("\n ____________________ ETAPA 3 ____________________\n");
+    }
     while (actual->sig->mano->size != 0) {
 
+
         // Revolver cartas
+        if (strcmp("JANICE",Jugador)==0) {
+            printf("\n-> TURNO = %s\n",actual->nombre);
+            printf("\nJugador: %s ",actual->nombre);
+            printf("| Mano: ");
+            mostrarMano(actual->mano);
+        }
         if (strcmp(actual->sig->nombre,Jugador)) {
-            printf("\n-> desea revolver la mano ? S/N : \n");
+            printf("\nDesea revolver la mano ? S/N : \n");
             scanf("%c",&respuesta);
+            getchar();
             if (tolower(respuesta) == 's' ) {
                 revolverMano(actual->mano);
+                if (strcmp("JANICE",Jugador)==0) {
+                    printf("\nJugador: %s ",actual->nombre);
+                    printf("| Mano: ");
+                    mostrarMano(actual->mano);
+                }
             }
         }else if (strcmp(actual->sig->nombre,CPU2)==0) {
             revolverMano(actual->sig->mano);
+            if (strcmp("JANICE",Jugador)==0) {
+                printf("\nJugador: %s ",actual->nombre);
+                printf("| Mano: ");
+                mostrarMano(actual->mano);
+            }
         }else if (strcmp(actual->sig->nombre,CPU3)==0) {
             revolverMano(actual->sig->mano);
+            if (strcmp("JANICE",Jugador)==0) {
+                printf("\nJugador: %s ",actual->nombre);
+                printf("| Mano: ");
+                mostrarMano(actual->mano);
+            }
         }
-        //mostrarMano(actual->sig->mano);
-
-
+        
         // Robo de Cartas
         if (strcmp(actual->nombre,Jugador)==0) {
-            printf("\n-> eliga una carta a robar entre 0-%d : ",actual->sig->mano->size );
-            scanf("%d\n",&carta);
+            printf("\nEliga una carta a robar entre 0-%d : ",actual->sig->mano->size );
+            scanf("%d",&carta);
+            getchar();
             value = buscarCarta(actual->sig->mano,carta);
             agregarCarta(actual->mano,value);
-            //borrarDeMano(actual->sig->mano,value);
+            borrarDeMano(actual->sig->mano,value);
+            EliminarPares(actual->mano);
+            if (strcmp("JANICE",Jugador)==0) {
+                printf("\n[Sacando Carta del Jugador]\n");
+                printf("\n Carta Sacada: %d\n",value);
+                printf("\nJugador: %s ",actual->nombre);
+                printf("| Mano: ");
+                mostrarMano(actual->mano);
+            }
 
         }else if (strcmp(actual->nombre,CPU1)==0) {
             value=obtenerPrimerValor(actual->sig->mano);
             agregarCarta(actual->mano,value);
-            //borrarDeMano(actual->sig->mano,value);
+            borrarDeMano(actual->sig->mano,value);
+            EliminarPares(actual->mano);
+            if (strcmp("JANICE",Jugador)==0) {
+                printf("\n[Sacando Carta del Jugador]\n");
+                printf("\n Carta Sacada: %d\n",value);
+                printf("\nJugador: %s ",actual->nombre);
+                printf("| Mano: ");
+                mostrarMano(actual->mano);
+            }
 
         }else if (strcmp(actual->nombre,CPU2)==0) {
             value=obtenerUltimoValor(actual->sig->mano);
             agregarCarta(actual->mano,value);
-            //borrarDeMano(actual->sig->mano,value);
+            borrarDeMano(actual->sig->mano,value);
+            EliminarPares(actual->mano);
+            if (strcmp("JANICE",Jugador)==0) {
+                printf("\n[Sacando Carta del Jugador]\n");
+                printf("\n Carta Sacada: %d\n",value);
+                printf("\nJugador: %s ",actual->nombre);
+                printf("| Mano: ");
+                mostrarMano(actual->mano);
+            }
 
         }else if (strcmp(actual->nombre,CPU3)==0) {
             value=obtenerAleatorio(actual->sig->mano);
             agregarCarta(actual->mano,value);
-            //borrarDeMano(actual->sig->mano,value);
+            borrarDeMano(actual->sig->mano,value);
+            EliminarPares(actual->mano);
+            if (strcmp("JANICE",Jugador)==0) {
+                printf("\n[Sacando Carta del Jugador]\n");
+                printf("\n Carta Sacada: %d\n",value);
+                printf("\nJugador: %s ",actual->nombre);
+                printf("| Mano: ");
+                mostrarMano(actual->mano);
+            }
         }
-
         actual = actual->sig;
-
-
     }
-
-
 }
 
 int main() {
     iniciar();
-
-    //preguntar al diego:
-    //borrarDeMano le da la wea
-    //obtenerAleatorio no funciona sin print
-    //etapa 3 problema prints
-
-    /*
-    char* nombre = "a";
-    char* nombre2 = "b";
-    Mano * mano = crearMano();
-    Turnos * turnos = crearTurnos();
-    agregarCarta(mano,J);
-    agregarCarta(mano,Q);
-    agregarCarta(mano,Q);
-    agregarCarta(mano,K);
-    agregarCarta(mano,K);
-    mostrarMano(mano);
-    int asd;
-    //asd = buscarCarta(mano,3);
-    asd = obtenerAleatorio(mano);
-    printf(" aleatorio es %d\n",asd );
-    //borrarDeMano(mano,Q);
-    //mostrarMano(mano);
-
-    //revolverMano(mano);
-    //EliminarPares(mano);
-
-    int prueba = obtenerPrimerValor(mano);
-    int prueba2 = obtenerUltimoValor(mano);
-
-    agregarJugador(turnos,nombre);
-    agregarJugador(turnos,nombre2);
-    //mostrarJugador(turnos);
-
-
-    //mostrarMazo();
-    */
 }
+
+
+//if algun dato creado en jugador == si
+//avanzar al siguiente
+//sino
+//robar carta
