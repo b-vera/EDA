@@ -28,8 +28,8 @@
  * siguinte.
  */
 typedef struct Carta {
-    int valor;
-    struct Carta * sig;
+    int valor;              //< Campo con el valor de cada carta.
+    struct Carta * sig;     //< Campo con el puntero a la carta siguiente.
 } Carta;
 
 /**
@@ -38,9 +38,9 @@ typedef struct Carta {
  * el tamaño de esta.
  */
 typedef struct Mano {
-    Carta * head;
-    Carta * tail;
-    int size;
+    Carta * head;           //< Campo con el puntero al primer elemento de la lista.
+    Carta * tail;           //< Campo con el puntero al ultimo elemento de la lista.
+    int size;               //< Campo con el tamaño de elementos en la lista.
 } Mano;
 
 /**
@@ -50,9 +50,9 @@ typedef struct Mano {
 
  */
 typedef struct jugador {
-    char* nombre;
-    Mano* mano;
-    int verificador;
+    char* nombre;           //< Campo con nombre del jugador correspondiente.
+    Mano* mano;             //< Campo con el puntero a la mano del jugador.
+    int verificador;        //< Campo con el valor verificador del jugador.
     struct jugador * sig;
 } jugador;
 
@@ -63,9 +63,9 @@ typedef struct jugador {
  * el tamaño de esta.
  */
 typedef struct Turnos {
-    jugador * head;
-    jugador * tail;
-    int size;
+    jugador * head;         //< Campo con el puntero al primer elemento de la lista.
+    jugador * tail;         //< Campo con el puntero al ultimo elemento de la lista.
+    int size;               //< Campo con el tamaño de elementos en la lista.
 } Turnos;
 
 /////////////////////////////////////////////////

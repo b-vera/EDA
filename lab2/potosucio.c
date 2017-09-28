@@ -384,11 +384,10 @@ void iniciar(){
     if (strcmp("JANICE",Jugador)==0) {
         printf("\n ____________________ ETAPA 3 ____________________\n");
     }
-
-    printf("validar %d cantJugadores %d\n",validar,cantJugadores );
     while (validar != cantJugadores) {
 
         if (actual->sig->verificador == 0) {
+            printf("\nEl Jugador %s Ha Perdido!\n",actual->nombre);
 
             // Revolver cartas
             if (strcmp("JANICE",Jugador)==0) {
