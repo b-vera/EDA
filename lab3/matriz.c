@@ -26,6 +26,7 @@ void imprimirMatriz(grafoMatriz * ptr ,int vertices) {
         printf("\n");
     }
 }
+
 void liberarMemoria(grafoMatriz * ptr ,int vertices) {
     int i;
     //liberar matriz
@@ -38,4 +39,32 @@ void liberarMemoria(grafoMatriz * ptr ,int vertices) {
     ptr = NULL;
     free(ptr);
 
+}
+
+void archivoMatriz(grafoMatriz * ptr) {
+ 	FILE *fp;
+    int count = 0;
+    int index = 0;
+    int value = 0;
+ 	fp = fopen ( "Entrada.in", "r" );
+
+    while (!feof(fp)){
+        if (count == 0) {
+            fscanf(fp, "%d" ,&value);
+            printf("vertices: %d\n",value);
+            count++;
+         } else if(count % 2 != 0) {
+            fscanf(fp, "%d" ,&index);
+            printf("index = %d\n",index);
+            count++;
+        } else {
+            fscanf(fp, "%d" ,&value);
+            ptr->matriz[index][value]=1;
+            printf("coordenada %d %d\n",index,value);
+            ptr->matriz[value][index]=1;
+            printf("coordenada %d %d\n",value,index);
+            count++;
+        }
+    }
+ 	fclose ( fp );
 }
