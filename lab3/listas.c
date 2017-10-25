@@ -1,31 +1,117 @@
 #include <stdio.h>
+#include "listas.h"
 
-Mano * crearLista() {
-    Mano * List = (Mano *)malloc(sizeof(Mano));
+Matriz * crearLista() {
+    Matriz * List = (Matriz *)malloc(sizeof(Matriz));
     List->head = NULL;
     List->tail = NULL;
-    List->size = 0;
+    List->vertices = 0;
     return List;
 }
 
-void agregarLista(Mano * list,int valor) {
+void agregarLista(Matriz * list,int nodo,int vertices) {
 
-    Carta * link = (Carta *)malloc(sizeof(Carta));
+    fila * link = (fila *)malloc(sizeof(fila));
 
-    if (list->size == 0 ) {
+    if (list->vertices == 0 ) {
         list->head= link;
         list->tail = link;
         //printf("%d\n",valor);
-        link->valor = valor;
+        link->nodo = nodo;
+        link-> arreglo = (int*)malloc(sizeof(int)*vertices);
         link->sig = NULL;
-        list->size++;
+        list->vertices++;
 
     }else {
         link->sig = NULL;
         list->tail->sig = link;
         //printf("%d\n",valor);
-        link->valor = valor;
-        list->size++;
+        link->nodo = nodo;
+        link-> arreglo = (int*)malloc(sizeof(int)*vertices);
+        list->vertices++;
         list->tail = link;
     }
 }
+
+void mostrarLista(Matriz * list) {
+    fila *ptr = list->head;
+    while(ptr) {
+        printf("%d", ptr->nodo);
+        if (ptr->sig) {
+            printf(" -> ");
+        }
+        ptr = ptr->sig;
+    }
+    printf("\n");
+}
+
+void imprimirArreglo(fila * ptr){
+    int i=0;
+    while(i<ptr->lenArreglo) {
+        printf("%d", ptr->arreglo[i]);
+        printf(" -> ");
+    }
+}
+
+void verticesEnLista(Matriz * list,int vertices) {
+    FILE *fp;
+    int count = 0;
+    int index = 0;
+    int value = 0;
+ 	fp = fopen ( "Entrada.in", "r" );
+    while (!feof(fp)){
+        // printf("count = %d  value = %d \n",count,value );
+
+        if (count == 0) {
+            fscanf(fp, "%d" ,&value);
+            // printf("vertices = %d\n",value);
+            count++;
+        } else if(count%2 == 0) {
+            fscanf(fp, "%d" ,&value);
+            // printf("es par\n");
+            count++;
+        } else {
+            fscanf(fp, "%d" ,&value);
+            if (value != index) {
+                agregarLista(list,value,vertices);
+                // printf("agregando a la lista\n");
+                index = value;
+            }
+            count++;
+        }
+    }
+    fclose ( fp );
+}
+
+void agregarEnLista(Matriz * list,int vertices) {
+    FILE *fp;
+    fila *ptr = list->head;
+    int count = 0;
+    int index = 0;
+    int value = 0;
+    int countArreglo = 0;
+    fp = fopen ( "Entrada.in", "r" );
+    while (!feof(fp)){
+        printf("count = %d\n",count);
+        if (count == 0) {
+            fscanf(fp, "%d" ,&value);
+            printf("vertices = %d\n",value);
+            count++;
+        } else if(count%2 == 0) {
+            fscanf(fp, "%d" ,&value);
+            ptr->arreglo[countArreglo]= value;
+            ptr->lenArreglo = ptr->lenArreglo+1;
+            countArreglo++;
+            count++;
+        } else {
+            fscanf(fp, "%d" ,&value);
+            if (index != value) {
+                ptr = ptr->sig;
+                countArreglo = 0;
+            }
+            index=value;
+            count++;
+        }
+    }
+    fclose ( fp );
+    }
