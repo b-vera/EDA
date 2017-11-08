@@ -10,10 +10,16 @@
 * Encargada de obtener el primer valor del archivo recibido con el Fin
 * de poder acceder a la cantidad de vertices que posee el nodo.
 *
-* @return 	int      vertices              cantidad de vertices totales del grafo.
+* @return 	int      vertices              Cantidad de vertices totales del grafo.
 */
 int cantVertices();
 
+/**
+* Encargada de obtener el  valor del primer vertice.
+*
+* @return 	int      inicial              Primer nodo del grafo.
+*/
+int inicial();
 /**
 * Funcion encargada generar la busqueda de un grupo de mejores amigos, esta recorre toda
 * la combinatoria de posibles soluciones de grupos de mejores amigos sin repeticiones.

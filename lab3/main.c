@@ -1,7 +1,8 @@
 #include <stdio.h>
-#include "matriz.c"
+#include <stdlib.h>
+#include <time.h>
 #include "matriz.h"
-#include "listas.c"
+#include "listas.h"
 
 int cantVertices() {
  	FILE *fp;
@@ -9,48 +10,54 @@ int cantVertices() {
  	fp = fopen ( "Entrada.in", "r" );
     fscanf(fp, "%d" ,&vertices);
  	fclose ( fp );
-    // printf("valor= %d\n",vertices);
     return vertices;
 }
 
-// void vacia(int * valor){
-//     if (valor[0] == '\0') {
-//         return 1;
-//     }
-//     return 0;
-// }
+int verticeInicial(){
+    FILE *fp;
+    int inicial;
+    fp = fopen("Entrada.in","r");
+    fscanf(fp,"%d",&inicial);
+    fscanf(fp,"%d",&inicial);
+    fclose(fp);
+    return inicial;
+}
 
-// void buscarVinculos(grafoMatriz * ptr,int vertices) {
-//
-//     int i,j;
-//     int * verticesRecorridos;
-//     int * aristasRecorridos;
-//     int * marcados;
-//     int * cola;
-//
-//     inicial=ptr->matriz[1][1];
-//
-//     verticesRecorridos = (int*)malloc(sizeof(int));
-//     aristasRecorridos = (int*)malloc(sizeof(int));
-//     marcados = (int*)malloc(sizeof(int));
-//     cola = (int*)malloc(sizeof(int));
-//
-//     for (i = 0; i < vertices; i++) {
-//         marcados[i]=0;
-//     }
-//
-//     cola[0]=inicial;
-//     marcados[inicial]=1;
-//
-//     while (vacia(cola)==0) {
-//         int u =
-//     }
-//
-// }
+void busquedaEnProfundidad(grafoMatriz * ptr,int vertices,int * visited,int * grafoRecorrido,int cont,int i) {
+    int j;
+    //se inserta en grafoRecorrido
+    //printf("\ni %d",i);
+    grafoRecorrido[cont]=i;
+    visited[i]=1;
+    for(j=0;j<vertices;j++){
+        if(!visited[j]&&ptr->matriz[i][j]==1){
+            busquedaEnProfundidad(ptr,vertices,visited,grafoRecorrido,cont+1,j);
+        }
+    }
+}
 
+void buscarArticulacion(grafoMatriz * ptr,int vertices) {
+    int * visited = (int*)calloc((vertices+1),sizeof(int));
+    int * grafoRecorrido = (int*)calloc((vertices+1),sizeof(int));
+
+    busquedaEnProfundidad(ptr,vertices+1,visited,grafoRecorrido,1,7);
+
+    // for(int d=0;d<vertices;d++){
+    //    printf("\n%d",grafoRecorrido[d]);
+    // }
+
+
+}
+
+/**
+* buscarCliques()
+* Encargada de la busqueda del grupo de mejores amigos
+*
+* @param 	grafoMatriz 	ptr 			Puntero que apunta a la matriz.
+* @param 	int           	vertices 		Cantidad de vertices totales en el grafo.
+*/
 void buscarCliques(grafoMatriz * ptr,int vertices) {
     int i,j,k,l;
-    int actual[4];
     for (i = 1; i < vertices; i++) {
         for (j = i+1; j < vertices; j++) {
             for (k = j+1; k < vertices; k++) {
@@ -72,22 +79,31 @@ void buscarCliques(grafoMatriz * ptr,int vertices) {
 
 void matriz() {
 
-    //cantidad de vertices iniciales
-    int vertices=0;
+    // cantidad de vertices iniciales
+    int i=0,vertices=0;
     vertices = cantVertices();
 
-    //matriz
+    // inicializacion de matriz
     grafoMatriz matriz;
     grafoMatriz * ptr;
     ptr = &matriz;
+
+    // parametros para medir tiempo
+    clock_t start, end;
+    double cpu_time_used;
 
     printf("\n***** Inicia el Programa con Matrices *****\n\n");
     iniciarMatriz(ptr,vertices+1);
     archivoMatriz(ptr);
     // imprimirMatriz(ptr,vertices+1);
-    // buscarVinculos(ptr,vertices+1);
+    start = clock();
     buscarCliques(ptr,vertices+1);
+    end = clock();
+    cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+    printf("\nEl algoritmo tarda %f segundos en ejecutarse. \n", cpu_time_used);
+    buscarArticulacion(ptr,vertices+1);
     liberarMemoria(ptr,vertices+1);
+    printf("\n***** Final del Programa con Matrices *****\n\n");
 }
 
 void lista() {
@@ -96,17 +112,18 @@ void lista() {
     int vertices=0;
     vertices = cantVertices();
 
-    printf("\n***** Inicia el Programa con Matrices *****\n\n");
+    printf("\n***** Inicia el Programa con Listas *****\n\n");
     Matriz lista;
     Matriz * ptr = crearLista();
     verticesEnLista(ptr,vertices);
-    mostrarLista(ptr);
+    //mostrarLista(ptr);
+    printf("\n***** Final del Programa con Listas *****\n\n");
 }
 
 int main() {
     matriz ();
     printf("\n");
-    lista ();
+    // lista ();
     printf("\n");
     return 0;
 }

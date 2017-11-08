@@ -1,8 +1,9 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "listas.h"
 
 Matriz * crearLista() {
-    Matriz * List = (Matriz *)malloc(sizeof(Matriz));
+    Matriz * List = (Matriz *)calloc(1,sizeof(Matriz));
     List->head = NULL;
     List->tail = NULL;
     List->vertices = 0;
@@ -11,14 +12,14 @@ Matriz * crearLista() {
 
 void agregarLista(Matriz * list,int nodo,int vertices) {
 
-    fila * link = (fila *)malloc(sizeof(fila));
+    fila * link = (fila *)calloc(1,sizeof(fila));
 
     if (list->vertices == 0 ) {
         list->head= link;
         list->tail = link;
         //printf("%d\n",valor);
         link->nodo = nodo;
-        link-> arreglo = (int*)malloc(sizeof(int)*vertices);
+        link-> arreglo = (int*)calloc(vertices,sizeof(int));
         link->sig = NULL;
         list->vertices++;
 
@@ -27,7 +28,7 @@ void agregarLista(Matriz * list,int nodo,int vertices) {
         list->tail->sig = link;
         //printf("%d\n",valor);
         link->nodo = nodo;
-        link-> arreglo = (int*)malloc(sizeof(int)*vertices);
+        link-> arreglo = (int*)calloc(vertices,sizeof(int));
         list->vertices++;
         list->tail = link;
     }

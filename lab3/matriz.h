@@ -11,8 +11,8 @@
  * matriz de adyacencia
  */
 typedef struct grafoMatriz {
-    int * vertices;         //< Campo con el valor de cada carta.
-    int ** matriz;     //< Campo con el puntero a la carta siguiente.
+    int * vertices;         //< Campo con la cantidad de vertices.
+    int ** matriz;     //< Campo que contiene arreglo bidimensional dinamico.
 } grafoMatriz ;
 
 /////////////////////////////////////////////////

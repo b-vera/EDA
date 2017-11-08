@@ -49,7 +49,7 @@
  * @param 	int 	vertices 		Vertices totales en el grafo.
  * @return 	void
  */
- void agregarLista(Matriz * list,int nodo,int vertices)
+ void agregarLista(Matriz * list,int nodo,int vertices);
 
  /**
  * Encargada de mostrar en pantalla los elementos de la lista matriz.
