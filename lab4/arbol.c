@@ -4,17 +4,13 @@
 #include "arbol.h"
 
 AVL * crearAVL() {
-	printf("++++ creando AVL ++++\n");
 	AVL * arbol = NULL;
 
-	if ( ( arbol = malloc( sizeof( AVL ) ) ) == NULL ) {
-		return NULL;
-	}
+	if ( ( arbol = malloc( sizeof( AVL ) ) ) == NULL ) return NULL;
 
 	arbol -> rootEsp = NULL;
 	arbol -> rootOtros = NULL;
 
-	printf("++++ AVL creado ++++\n\n");
 	return arbol;
 }
 
@@ -78,7 +74,7 @@ void insertarNodoOtros(AVL *arbol, char *palabra, char *otra, char *significado 
 
 
 	} else {
-		siguiente = arbol->rootOtros;
+		siguiente = arbol -> rootOtros;
 		ultimo = NULL;
 		insertarOtro (nodo, siguiente,ultimo,palabra,otra,significado);
 	}
@@ -92,7 +88,7 @@ void insertarEsp(Nodo *nodo, Nodo *siguiente, Nodo *ultimo, char *palabra, char 
 		// printf("siguiente Inicio   -> %s\n",siguiente->palabraEsp);
 		ultimo = siguiente;
 		int valor = strcmp(siguiente->palabraEsp,palabra);
-		if (strcmp(siguiente->palabraEsp,palabra) <= 0) {
+		if (strcmp(siguiente->palabraEsp,palabra) < 0) {
 			// printf("entro a derecha\n");
 			siguiente = siguiente->espR;
 			flag = 1;
@@ -101,6 +97,8 @@ void insertarEsp(Nodo *nodo, Nodo *siguiente, Nodo *ultimo, char *palabra, char 
 			// printf("entro a izquierda\n");
 			siguiente = siguiente->espL;
 			flag = 0;
+		} else {
+			return;
 		}
 	}
 
@@ -123,7 +121,7 @@ void insertarOtro(Nodo *nodo, Nodo *siguiente, Nodo *ultimo, char *palabra, char
 
 		ultimo = siguiente;
 		int valor = strcmp(siguiente->palabraOtro,otra);
-		if (strcmp(siguiente->palabraOtro,otra) <= 0) {
+		if (strcmp(siguiente->palabraOtro,otra) < 0) {
 			// printf("entro a derecha\n");
 			siguiente = siguiente->otroR;
 			flag = 1;
@@ -132,6 +130,8 @@ void insertarOtro(Nodo *nodo, Nodo *siguiente, Nodo *ultimo, char *palabra, char
 			// printf("entro a izquierda\n");
 			siguiente = siguiente->otroL;
 			flag = 0;
+		} else {
+			return;
 		}
 	}
 
@@ -148,18 +148,18 @@ void insertarOtro(Nodo *nodo, Nodo *siguiente, Nodo *ultimo, char *palabra, char
 void inOrdenEsp(Nodo *nodo) {
 
     if(nodo != NULL){
-        inOrdenEsp(nodo->espL);
-        printf("%s\n",nodo->palabraEsp);
-        inOrdenEsp(nodo->espR);
+        inOrdenEsp(nodo -> espL);
+        printf("%s\n",nodo -> palabraEsp);
+        inOrdenEsp(nodo -> espR);
     }
 }
 
 void inOrdenOtro(Nodo *nodo) {
 
     if(nodo != NULL){
-        inOrdenOtro(nodo->otroL);
-        printf("%s\n",nodo->palabraOtro);
-        inOrdenOtro(nodo->otroR);
+        inOrdenOtro(nodo -> otroL);
+        printf("%s\n",nodo -> palabraOtro);
+        inOrdenOtro(nodo -> otroR);
     }
 }
 
@@ -202,66 +202,129 @@ int diferenciaAlturasOtros(Nodo *nodo) {
 	return alturaOtro(nodo->otroL)-alturaOtro(nodo->otroR);
 }
 
-void equilibrarEsp(Nodo *nodo) {
+void equilibrarEsp(AVL *arbol, Nodo *nodo) {
 
-	int diferencia = diferenciaAlturasEsp(nodo);
-
-	if (diferencia == 2 && nodo->espL != NULL) {
-		if (diferenciaAlturasEsp(nodo->espL) < 0) {
-			rotarIzquierdaEsp(nodo->espL);
+	int diferencia1, diferencia2;
+	diferencia1 = diferenciaAlturasEsp(nodo);
+	if (diferencia1 > 1) {
+		diferencia2 = diferenciaAlturasEsp(nodo->espL);
+		if (diferencia2 < 0) {
+			rotarIzquierdaEsp(arbol,nodo->espL);
 		}
-		rotarDerechaEsp(nodo);
+		rotarDerechaEsp(arbol,nodo);
 	}
-	if (diferencia == -2 && nodo->espR != NULL) {
-		if (diferenciaAlturasEsp(nodo->espR) > 0) {
-			rotarDerechaEsp(nodo->espR);
+	if (diferencia1 < -1) {
+		diferencia2 = diferenciaAlturasEsp(nodo->espR);
+		if (diferencia2 > 0) {
+			rotarDerechaEsp(arbol,nodo->espR);
 		}
-		rotarIzquierdaEsp(nodo);
+		rotarIzquierdaEsp(arbol,nodo);
 	}
+
 }
 
-void equilibrarOtros(Nodo *nodo) {
+void equilibrarOtros(AVL *arbol, Nodo *nodo) {
 
-	int diferencia = diferenciaAlturasOtros(nodo);
-
-	if (diferencia == 2 && nodo->otroL != NULL) {
-		if (diferenciaAlturasOtros(nodo->otroL) < 0) {
-			rotarIzquierdaOtros(nodo->otroL);
+	int diferencia1, diferencia2;
+	diferencia1 = diferenciaAlturasOtros(nodo);
+	if (diferencia1 > 1) {
+		diferencia2 = diferenciaAlturasOtros(nodo->otroL);
+		if (diferencia2 < 0) {
+			rotarIzquierdaOtros(arbol,nodo->otroL);
 		}
-		rotarDerechaOtros(nodo);
+		rotarDerechaOtros(arbol,nodo);
 	}
-	if (diferencia == -2 && nodo->otroR != NULL) {
-		if (diferenciaAlturasOtros(nodo->otroR) > 0) {
-			rotarDerechaOtros(nodo->otroR);
+	if (diferencia1 < -1) {
+		diferencia2 = diferenciaAlturasOtros(nodo->otroR);
+		if (diferencia2 > 0) {
+			rotarDerechaOtros(arbol,nodo->otroR);
 		}
-		rotarIzquierdaOtros(nodo);
+		rotarIzquierdaOtros(arbol,nodo);
 	}
 }
 
-void rotarDerechaEsp(Nodo *nodo) {
+void rotarDerechaEsp(AVL *arbol, Nodo *nodo) {
+
 	Nodo *raiz;
-	raiz = nodo->espL;
-	nodo->espL = raiz->espR;
-	raiz->espR = nodo;
+	raiz = nodo -> espL;
+	if (nodo  -> padreEsp == NULL) {
+		arbol -> rootEsp = raiz;
+	} else {
+		if (nodo == nodo -> padreEsp -> espL) {
+			nodo -> padreEsp -> espL = raiz;
+		} else {
+			nodo -> padreEsp -> espR = raiz;
+		}
+	}
+	nodo -> espL = raiz -> espR;
+	raiz -> espR = nodo;
+	raiz -> padreEsp = nodo -> padreEsp;
+	raiz -> espR -> padreEsp = raiz;
+	if (raiz -> espL != NULL) {
+		raiz -> espL -> padreEsp = raiz;
+	}
 }
 
-void rotarDerechaOtros(Nodo *nodo) {
+void rotarDerechaOtros(AVL * arbol, Nodo *nodo) {
 	Nodo *raiz;
-	raiz = nodo->otroL;
-	nodo->otroL = raiz->otroR;
-	raiz->otroR = nodo;
+	raiz = nodo -> otroL;
+	if (nodo -> padreOtro == NULL) {
+		arbol -> rootOtros = raiz;
+	} else {
+		if (nodo == nodo -> padreOtro -> otroL) {
+			nodo -> padreOtro -> otroL = raiz;
+		} else {
+			nodo -> padreOtro -> otroR = raiz;
+		}
+	}
+	nodo -> otroL = raiz -> otroR;
+	raiz -> otroR = nodo;
+	raiz -> padreOtro = nodo -> padreOtro;
+	raiz -> otroR -> padreOtro = raiz;
+	if (raiz -> otroL != NULL) {
+		raiz -> otroL -> padreOtro = raiz;
+	}
 }
 
-void rotarIzquierdaEsp(Nodo *nodo) {
+void rotarIzquierdaEsp(AVL *arbol, Nodo *nodo) {
+
 	Nodo *raiz;
-	raiz = nodo->espR;
-	nodo->espR = raiz->espL;
-	raiz->espL = nodo;
+	raiz = nodo -> espR;
+	if (nodo -> padreEsp == NULL) {
+		arbol -> rootEsp = raiz;
+	} else {
+		if (nodo == nodo -> padreEsp -> espL) {
+			nodo-> padreEsp -> espL = raiz;
+		} else {
+			nodo-> padreEsp -> espR = raiz;
+		}
+	}
+	nodo -> espR = raiz -> espL;
+	raiz -> espL = nodo;
+	raiz -> padreEsp = nodo -> padreEsp;
+	raiz -> espL -> padreEsp = raiz;
+	if (raiz -> espR != NULL) {
+		raiz -> espR -> padreEsp = raiz;
+	}
 }
 
-void rotarIzquierdaOtros(Nodo *nodo) {
+void rotarIzquierdaOtros(AVL *arbol, Nodo *nodo) {
 	Nodo *raiz;
-	raiz = nodo->otroR;
-	nodo->otroR = raiz->otroL;
-	raiz->otroL = nodo;
+	raiz = nodo -> otroR;
+	if (nodo -> padreOtro == NULL) {
+		arbol -> rootOtros = raiz;
+	} else {
+		if (nodo == nodo -> padreOtro -> otroL) {
+			nodo -> padreOtro -> otroL = raiz;
+		} else {
+			nodo -> padreOtro -> otroR = raiz;
+		}
+	}
+	nodo -> otroR = raiz -> otroL;
+	raiz -> otroL = nodo;
+	raiz -> padreOtro = nodo-> padreOtro;
+	raiz -> otroL -> padreOtro = raiz;
+	if (raiz -> otroR != NULL) {
+		raiz -> otroR -> padreOtro = raiz;
+	}
 }

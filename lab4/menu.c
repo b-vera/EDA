@@ -4,15 +4,15 @@
 void menu() {
     int n, opcion;
     do {
-        printf( "\n   1. Calcular el doble de un n%cmero entero.", 163 );
-        printf( "\n   2. Calcular la mitad de un n%cmero entero.", 163 );
-        printf( "\n   3. Calcular el cuadrado de un n%cmero entero.", 163 );
-        printf( "\n   4. Salir." );
-        printf( "\n\n   Introduzca opci%cn (1-4): ", 162 );
+        printf("\n   ###############  TRADUCTOR  ###############\n");
+        printf( "\n   1. Traducir palabra de espanol a otro idioma.");
+        printf( "\n   2. Traducir palabra de otro idioma a espanol");
+        printf( "\n   3. Consultar significado de una palabra.");
+        printf( "\n   4. Entregar informacion de todo el arbol (espanol-ingles).");
+        printf( "\n   5. Salir." );
+        printf( "\n\n   Introduzca opcion (1-5): ");
 
         scanf( "%d", &opcion );
-
-        /* Inicio del anidamiento */
 
         switch ( opcion )
         {
@@ -29,7 +29,11 @@ void menu() {
             case 3: printf( "\n   Introduzca un n%cmero entero: ", 163 );
                     scanf( "%d", &n );
                     printf( "\n   El cuadrado de %d es %d\n\n", n, ( int ) pow( n, 2 ) );
+
+            case 4: printf( "\n   Introduzca un n%cmero entero: ", 163 );
+                    scanf( "%d", &n );
+                    printf( "\n   El cuadrado de %d es %d\n\n", n, ( int ) pow( n, 2 ) );
          }
 
-    } while ( opcion != 4 );
+    } while ( opcion != 5 );
 }

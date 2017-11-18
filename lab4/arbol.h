@@ -7,6 +7,8 @@ typedef struct Nodo {
     char * palabraOtro;
     char * defEsp;
     char * defOtro;
+    struct Nodo * padreEsp;
+	struct Nodo * padreOtro;
 	struct Nodo * espL;
 	struct Nodo * espR;
     struct Nodo * otroL;
@@ -30,10 +32,11 @@ int alturaEsp (Nodo *nodo);
 int alturaOtro (Nodo *nodo);
 int diferenciaAlturasEsp(Nodo *nodo);
 int diferenciaAlturasOtros(Nodo *nodo);
-void equilibrarEsp(Nodo *nodo);
-void equilibrarOtros(Nodo *nodo);
-void rotarDerechaEsp(Nodo *nodo);
-void rotarDerechaOtros(Nodo *nodo);
-void rotarIzquierdaEsp(Nodo *nodo);
-void rotarIzquierdaOtros(Nodo *nodo);
+void equilibrarEsp(AVL *arbol, Nodo *nodo);
+void equilibrarOtros(AVL *arbol, Nodo *nodo);
+void rotarDerechaEsp(AVL *arbol, Nodo *nodo);
+void rotarDerechaOtros(AVL *arbol, Nodo *nodo);
+void rotarIzquierdaEsp(AVL *arbol, Nodo *nodo);
+void rotarIzquierdaOtros(AVL *arbol, Nodo *nodo);
+void menu();
 #endif

@@ -13,9 +13,9 @@ void leerArchivo(AVL *arbol){
     while (!feof(fp)){
         fscanf(fp, "%s %s %[^\n]", str1, str2, str3);
         insertarNodoEsp(arbol,str1,str2,str3);
-        equilibrarEsp(arbol->rootEsp);
+        equilibrarEsp(arbol,arbol->rootEsp);
         insertarNodoOtros(arbol,str1,str2,str3);
-        equilibrarOtros(arbol->rootOtros);
+        equilibrarOtros(arbol,arbol->rootOtros);
     }
 	fclose(fp);
     free(str1);
@@ -23,15 +23,20 @@ void leerArchivo(AVL *arbol){
     free(str3);
 }
 
+void escribirArchivo(AVL *arbol){
+    FILE *fp;
+    fp = fopen ("Diccionario.in","w");
+    // utilizar in orden pero en vez de printf usar fprintf(archivoSalida,"%d",valor * 3);
+    fclose(fp);
+}
+
 int main() {
+    menu();
     AVL *arbol = NULL;
     arbol = crearAVL();
     leerArchivo(arbol);
     inOrdenEsp (arbol->rootEsp);
+    printf("\n");
     inOrdenOtro(arbol->rootOtros);
-    printf("altura arbol esp = %d\n",alturaEsp(arbol->rootEsp));
-    printf("diferencia alturas es = %d\n",diferenciaAlturasEsp(arbol->rootEsp));
-    printf("altura arbol otro = %d\n",alturaOtro(arbol->rootOtros));
-    printf("diferencia alturas es = %d\n",diferenciaAlturasOtros(arbol->rootOtros));
     return 0;
 }
