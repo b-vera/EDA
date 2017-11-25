@@ -1,7 +1,29 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <ctype.h>
 #include <string.h>
 #include "arbol.h"
+
+void leerArchivo(AVL *arbol){
+    char *str1, *str2, *str3;
+    str1 = (char*)malloc(sizeof(char)*100);
+    str2 = (char*)malloc(sizeof(char)*100);
+    str3 = (char*)malloc(sizeof(char)*1000);
+
+    FILE *fp;
+    fp = fopen ("Diccionario.in","r");
+    while (!feof(fp)){
+        fscanf(fp, "%s %s %[^\n]", str1, str2, str3);
+        insertarNodoEsp(arbol,str1,str2,str3);
+        equilibrarEsp(arbol,arbol->rootEsp);
+        insertarNodoOtros(arbol,str1,str2,str3);
+        equilibrarOtros(arbol,arbol->rootOtros);
+    }
+	fclose(fp);
+    free(str1);
+    free(str2);
+    free(str3);
+}
 
 AVL * crearAVL() {
 	AVL * arbol = NULL;
@@ -24,8 +46,7 @@ Nodo * inicializarNodo() {
     // se inicializan las cadenas de string
     nodo -> palabraEsp  = (char*)malloc(sizeof(char)*100);
     nodo -> palabraOtro = (char*)malloc(sizeof(char)*100);
-    nodo -> defEsp	 	= (char*)malloc(sizeof(char)*100);
-    nodo -> defOtro 	= (char*)malloc(sizeof(char)*100);
+    nodo -> defEsp	 	= (char*)malloc(sizeof(char)*1000);
 
     // se inicializan los punteros
     nodo -> espL  = NULL;
@@ -145,21 +166,46 @@ void insertarOtro(Nodo *nodo, Nodo *siguiente, Nodo *ultimo, char *palabra, char
 
 }
 
-void inOrdenEsp(Nodo *nodo) {
+void inOrdenEsp(Nodo *nodo,FILE *fp) {
 
     if(nodo != NULL){
-        inOrdenEsp(nodo -> espL);
-        printf("%s\n",nodo -> palabraEsp);
-        inOrdenEsp(nodo -> espR);
+
+        inOrdenEsp(nodo -> espL,fp);
+
+		fprintf(fp, "%s ", nodo -> palabraEsp);
+		if (nodo -> espL == NULL) {
+			fprintf(fp, "(NULL ");
+		} else {
+			fprintf(fp, "(%s ",nodo -> espL -> palabraEsp );
+		}
+		if (nodo -> espR == NULL) {
+			fprintf(fp, "NULL)\n");
+		} else {
+			fprintf(fp, "%s)\n",nodo -> espR -> palabraEsp );
+		}
+
+		inOrdenEsp(nodo -> espR,fp);
     }
 }
 
-void inOrdenOtro(Nodo *nodo) {
+void inOrdenOtro(Nodo *nodo,FILE *fp) {
 
     if(nodo != NULL){
-        inOrdenOtro(nodo -> otroL);
-        printf("%s\n",nodo -> palabraOtro);
-        inOrdenOtro(nodo -> otroR);
+        inOrdenOtro(nodo -> otroL,fp);
+
+		fprintf(fp, "%s ", nodo -> palabraOtro);
+		if (nodo -> otroL == NULL) {
+			fprintf(fp, "(NULL ");
+		} else {
+			fprintf(fp, "(%s ",nodo -> otroL -> palabraOtro );
+		}
+		if (nodo -> otroR == NULL) {
+			fprintf(fp, "NULL)\n");
+		} else {
+			fprintf(fp, "%s)\n",nodo -> otroR -> palabraOtro );
+		}
+
+        inOrdenOtro(nodo -> otroR,fp);
     }
 }
 
@@ -327,4 +373,50 @@ void rotarIzquierdaOtros(AVL *arbol, Nodo *nodo) {
 	if (raiz -> otroR != NULL) {
 		raiz -> otroR -> padreOtro = raiz;
 	}
+}
+
+void buscarPalabraEsp(Nodo *nodo,char * palabraIn,char * palabraOut) {
+	if(nodo != NULL){
+		// printf("PALABRA NODO: %s",nodo->palabraEsp );
+		// printf("-- PALABRA IN: %s\n",palabraIn);
+		if (strcmp(convertirTolower(nodo -> palabraEsp),convertirTolower(palabraIn))==0) {
+			strcpy(palabraOut,nodo -> palabraOtro);
+		}
+		buscarPalabraEsp(nodo -> espR,palabraIn,palabraOut);
+		buscarPalabraEsp(nodo -> espL,palabraIn,palabraOut);
+    }
+}
+
+void buscarPalabraOtro(Nodo *nodo,char * palabraIn,char * palabraOut) {
+	if(nodo != NULL){
+		// printf("PALABRA NODO: %s",nodo->palabraOtro );
+		// printf("-- PALABRA IN: %s\n",palabraIn);
+		if (strcmp(convertirTolower(nodo -> palabraOtro),convertirTolower(palabraIn))==0) {
+			strcpy(palabraOut,nodo -> palabraEsp);
+		}
+		buscarPalabraOtro(nodo -> otroR,palabraIn,palabraOut);
+		buscarPalabraOtro(nodo -> otroL,palabraIn,palabraOut);
+    }
+}
+
+void buscarDefinicion(Nodo *nodo,char * palabraIn,char * palabraOut) {
+	if(nodo != NULL){
+		// printf("PALABRA NODO: %s",nodo->palabraOtro );
+		// printf("-- PALABRA IN: %s\n",palabraIn);
+		if (strcmp(convertirTolower(nodo -> palabraEsp),convertirTolower(palabraIn))==0) {
+			strcpy(palabraOut,nodo -> defEsp);
+		}
+		buscarDefinicion(nodo -> espL,palabraIn,palabraOut);
+		buscarDefinicion(nodo -> espL,palabraIn,palabraOut);
+    }
+}
+
+char *convertirTolower(char *str){
+	unsigned char *mystr = (unsigned char *)str;
+
+	while (*mystr) {
+		*mystr = tolower(*mystr);
+		mystr++;
+	}
+	return str;
 }

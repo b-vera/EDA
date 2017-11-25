@@ -1,39 +1,91 @@
 #include <stdio.h>
-#include <math.h>
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
+#include "arbol.h"
 
 void menu() {
-    int n, opcion;
+
+    int opcion;
+
+    FILE *fp;
+    fp = fopen ("Palabras.out","w");
+
+    AVL *arbol = NULL;
+    arbol = crearAVL();
+    leerArchivo(arbol);
+
+    char *palabraIn,*palabraOut,*palabraAnterior,*value;
+    value           = (char*)malloc(sizeof(char)*20);
+    palabraIn       = (char*)malloc(sizeof(char)*20);
+    palabraOut      = (char*)malloc(sizeof(char)*20);
+    palabraAnterior = (char*)malloc(sizeof(char)*20);
+
     do {
+        // system("clear");
         printf("\n   ###############  TRADUCTOR  ###############\n");
         printf( "\n   1. Traducir palabra de espanol a otro idioma.");
         printf( "\n   2. Traducir palabra de otro idioma a espanol");
         printf( "\n   3. Consultar significado de una palabra.");
-        printf( "\n   4. Entregar informacion de todo el arbol (espanol-ingles).");
-        printf( "\n   5. Salir." );
-        printf( "\n\n   Introduzca opcion (1-5): ");
+        printf( "\n   4. Entregar informacion de todo el arbol en espanol.");
+        printf( "\n   5. Entregar informacion de todo el arbol en ingles.");
+        printf( "\n   6. Salir." );
+        printf( "\n\n   Introduzca opcion (1-6): ");
 
-        scanf( "%d", &opcion );
+        // scanf( "%d", &opcion );
+        scanf("%s",value);
+        opcion = atoi(value);
 
-        switch ( opcion )
-        {
-            case 1: printf( "\n   Introduzca un n%cmero entero: ", 163 );
-                    scanf( "%d", &n );
-                    printf( "\n   El doble de %d es %d\n\n", n, n * 2 );
+        switch ( opcion ) {
+
+            case 1: printf("\n   Escoja una palabra en espanol a traducir: ");
+                    scanf("%s",palabraIn);
+                    strcpy(palabraAnterior,palabraOut);
+                    buscarPalabraEsp(arbol->rootEsp,palabraIn,palabraOut);
+                    if (strcmp(palabraOut,"")==0 || strcmp(palabraOut,palabraAnterior)==0) {
+                        printf("\n   No se encuentra la palabra.\n");
+                    } else {
+                        printf("\n   La traduccion es: %s\n",palabraOut);
+                    }
                     break;
 
-            case 2: printf( "\n   Introduzca un n%cmero entero: ", 163 );
-                    scanf( "%d", &n );
-                    printf( "\n   La mitad de %d es %f\n\n", n, ( float ) n / 2 );
+            case 2: printf("\n   Escoja una palabra en otro idioma a traducir: ");
+                    scanf("%s",palabraIn);
+                    strcpy(palabraAnterior,palabraOut);
+                    buscarPalabraOtro(arbol->rootOtros,palabraIn,palabraOut);
+                    if (strcmp(palabraOut,"")==0 || strcmp(palabraOut,palabraAnterior)==0) {
+                        printf("\n   No se encuentra la palabra.\n");
+                    } else {
+                        printf("\n   La traduccion es: %s\n",palabraOut);
+                    }
                     break;
 
-            case 3: printf( "\n   Introduzca un n%cmero entero: ", 163 );
-                    scanf( "%d", &n );
-                    printf( "\n   El cuadrado de %d es %d\n\n", n, ( int ) pow( n, 2 ) );
+            case 3: printf("\n   Escoja una palabra a definir: ");
+                    scanf("%s",palabraIn);
+                    strcpy(palabraAnterior,palabraOut);
+                    buscarDefinicion(arbol->rootEsp,palabraIn,palabraOut);
+                    if (strcmp(palabraOut,"")==0 || strcmp(palabraOut,palabraAnterior)==0) {
+                        printf("\n   No se encuentra la palabra.\n");
+                    } else {
+                        printf("\n   La Definicion es: %s\n",palabraOut);
+                    }
+                    break;
 
-            case 4: printf( "\n   Introduzca un n%cmero entero: ", 163 );
-                    scanf( "%d", &n );
-                    printf( "\n   El cuadrado de %d es %d\n\n", n, ( int ) pow( n, 2 ) );
+            case 4: printf("\n   Presione 6 para salir del programa y ver el archivo generado. \n");
+                    inOrdenEsp(arbol->rootEsp,fp);
+                    break;
+
+            case 5: printf("\n   Presione 6 para salir del programa y ver el archivo generado. \n");
+                    inOrdenOtro(arbol->rootOtros,fp);
+                    break;
+
          }
 
-    } while ( opcion != 5 );
+    } while ( opcion != 6 );
+
+    fclose(fp);
+    free(value);
+    free(palabraIn);
+    free(palabraOut);
+    free(palabraAnterior);
 }
