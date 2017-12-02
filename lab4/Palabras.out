@@ -1,8 +1,0 @@
-Amarillo (NULL NULL)
-Azul (Amarillo Celular)
-Celular (NULL Libro)
-Libro (NULL NULL)
-Naranja (Azul Rojo)
-Negro (NULL NULL)
-Rojo (Negro Verde)
-Verde (NULL NULL)
